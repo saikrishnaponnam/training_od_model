@@ -1,5 +1,6 @@
 import pandas as pd
 from PIL import Image
+import shutil
 
 
 def get_catgeory_map(file="training_demo/annotations/list_category_cloth.txt"):
@@ -121,6 +122,36 @@ if __name__ == '__main__':
     # print(get_img_status())
 
     # print(get_annot_csv())
-    df = get_annot_csv()
-    print(df)
-    df.to_csv('training_demo/annotations/annotation.csv', index=None)
+    # df = get_annot_csv()
+    # print(df)
+    # df.to_csv('training_demo/annotations/annotation.csv', index=None)
+
+    df = pd.read_csv("training_demo/annotation.csv")
+
+    # for idx, row in df.iterrows():
+    #     # print(row['original_filename'], row['eval_status'], row['filename'])
+    #     print(idx)
+    #     shutil.copy("training_demo/" + row['original_filename'], "training_demo/images/" + row['eval_status'] + "/" + row['filename'])
+
+    train_df = pd.DataFrame()
+    test_df = pd.DataFrame()
+    val_df = pd.DataFrame()
+    for idx, row in df.iterrows():
+        print(idx)
+        if row['eval_status'] == 'train':
+            train_df = train_df.append(row)
+        elif row['eval_status'] == 'test':
+            test_df = test_df.append(row)
+        else:
+            val_df = val_df.append(row)
+
+    print(len(train_df))
+    print(len(test_df))
+    print(len(val_df))
+
+    train_df.to_csv('training_demo/data/{}.csv'.format("train"), index=None)
+    test_df.to_csv('training_demo/data/{}.csv'.format("test"), index=None)
+    val_df.to_csv('training_demo/data/{}.csv'.format("val"), index=None)
+
+
+
