@@ -68,16 +68,20 @@ def create_tf_example(group, path):
 
 
 def main(_):
-    csv_input = "training_demo/data/train.csv"
-    output_path = "training_demo/data/train.record"
-    img_dir = "training_demo/images/train"
+    mode = "test"
+
+    csv_input = "training_demo/data/{}.csv".format(mode)
+    output_path = "training_demo/data/{}.record".format(mode)
+    img_dir = "training_demo/images/{}".format(mode)
 
     writer = tf.python_io.TFRecordWriter(output_path)
     # path = os.path.join(img_path)
     examples = pd.read_csv(csv_input)
     grouped = split(examples, 'filename')
+    idx = 1
     for group in grouped:
-        print(group)
+        print(idx)
+        idx += 1
         img_path = os.path.join(img_dir, group.filename)
         tf_example = create_tf_example(group, img_path)
         writer.write(tf_example.SerializeToString())
