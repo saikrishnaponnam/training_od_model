@@ -5,26 +5,26 @@ import sys
 from PIL import Image
 import io
 
-
 sys.path.append("models/research")
 from object_detection.utils import dataset_util
 from collections import namedtuple, OrderedDict
 
-def get_catgeory_map(file="training_demo/annotations/list_category_cloth.txt"):
-    _categories = []
-    with open(file, 'r') as fp:
-        _categories = fp.readlines()[1:]
-    _categories = [cat.split()[0] for cat in _categories]
 
+def get_catgeory_map(file="training_demo/annotations/list_category_cloth.txt"):
+    with open(file, 'r') as fp:
+        data = fp.readlines()[2:]
+    data = [cat.split()[0] for cat in data]
     categories = dict()
-    for i, ctg in enumerate(_categories):
+    for i, ctg in enumerate(data):
         categories[ctg] = i + 1
     return categories
+
 
 def split(df, group):
     data = namedtuple('data', ['filename', 'object'])
     gb = df.groupby(group)
     return [data(filename, gb.get_group(x)) for filename, x in zip(gb.groups.keys(), gb.groups)]
+
 
 def create_tf_example(group, path):
     with tf.gfile.GFile(path, 'rb') as fid:
@@ -68,7 +68,7 @@ def create_tf_example(group, path):
 
 
 def main(_):
-    mode = "test"
+    mode = "train"
 
     csv_input = "training_demo/data/{}.csv".format(mode)
     output_path = "training_demo/data/{}.record".format(mode)
@@ -76,7 +76,17 @@ def main(_):
 
     writer = tf.python_io.TFRecordWriter(output_path)
     # path = os.path.join(img_path)
-    examples = pd.read_csv(csv_input)
+    data = pd.read_csv(csv_input).filter(['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax'])
+    data = data[data['class'].isin(ctg)]
+    # print(data)
+
+    cnt = 3000 if mode == "train" else 1500
+    examples = pd.DataFrame()
+    for ct in ctg.keys():
+        examples = examples.append(data[data['class'] == ct][:cnt])
+    examples = examples.sample(frac=1).reset_index(drop=True)
+    print(len(examples))
+
     grouped = split(examples, 'filename')
     idx = 1
     for group in grouped:
@@ -92,6 +102,7 @@ def main(_):
 
 
 if __name__ == '__main__':
-    ctg = get_catgeory_map()
+    ctg = get_catgeory_map("training_demo/annotations/list_category_cloth_sub.txt")
+    print(ctg)
     tf.app.run()
-    # print(ctg)
+    pass

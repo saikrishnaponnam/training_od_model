@@ -1,0 +1,28 @@
+item {
+  id: 1
+  name: 'Blouse'
+}
+item {
+  id: 2
+  name: 'Hoodie'
+}
+item {
+  id: 3
+  name: 'Jacket'
+}
+item {
+  id: 4
+  name: 'Jeans'
+}
+item {
+  id: 5
+  name: 'Leggings'
+}
+item {
+  id: 6
+  name: 'Dress'
+}
+item {
+  id: 7
+  name: 'Romper'
+}

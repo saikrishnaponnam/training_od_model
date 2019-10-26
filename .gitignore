@@ -1,6 +1,7 @@
-training_demo/images
-training_demo/images_attr
-training_demo/img
 .idea/
+training_demo/images/*
+training_demo/img
 training_demo/annotations/*
 models/
+*.record
+training_demo/ssd_mobilenet_v2_coco_2018_03_29
