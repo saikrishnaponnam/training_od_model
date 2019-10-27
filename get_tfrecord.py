@@ -68,14 +68,12 @@ def create_tf_example(group, path):
 
 
 def main(_):
-    mode = "train"
+    mode = "test"
 
     csv_input = "training_demo/data/{}.csv".format(mode)
     output_path = "training_demo/data/{}.record".format(mode)
     img_dir = "training_demo/images/{}".format(mode)
 
-    writer = tf.python_io.TFRecordWriter(output_path)
-    # path = os.path.join(img_path)
     data = pd.read_csv(csv_input).filter(['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax'])
     data = data[data['class'].isin(ctg)]
     # print(data)
@@ -87,18 +85,19 @@ def main(_):
     examples = examples.sample(frac=1).reset_index(drop=True)
     print(len(examples))
 
-    grouped = split(examples, 'filename')
-    idx = 1
-    for group in grouped:
-        print(idx)
-        idx += 1
-        img_path = os.path.join(img_dir, group.filename)
-        tf_example = create_tf_example(group, img_path)
-        writer.write(tf_example.SerializeToString())
-
-    writer.close()
-    # output_path = os.path.join(os.getcwd(), output_path)
-    print('Successfully created the TFRecords: {}'.format(output_path))
+    # writer = tf.python_io.TFRecordWriter(output_path)
+    # grouped = split(examples, 'filename')
+    # idx = 1
+    # for group in grouped:
+    #     print(idx)
+    #     idx += 1
+    #     img_path = os.path.join(img_dir, group.filename)
+    #     tf_example = create_tf_example(group, img_path)
+    #     writer.write(tf_example.SerializeToString())
+    #
+    # writer.close()
+    # # output_path = os.path.join(os.getcwd(), output_path)
+    # print('Successfully created the TFRecords: {}'.format(output_path))
 
 
 if __name__ == '__main__':
